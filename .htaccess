@@ -1,0 +1,56 @@
+Options -Indexes
+Options +FollowSymLinks
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /Magtech/
+
+  # ── API Routes ──────────────────────────────────────────────
+  RewriteRule ^api/v1/marketplace/sync$         api/v1/marketplace/sync.php   [L,QSA]
+  RewriteRule ^api/v1/marketplace/photos/upload$ api/v1/marketplace/photos.php [L,QSA]
+  RewriteRule ^api/v1/public/items$             api/v1/public/items.php       [L,QSA]
+  RewriteRule ^api/v1/public/items/([0-9]+)$    api/v1/public/item.php?id=$1  [L,QSA]
+
+  # ── Page Routes ─────────────────────────────────────────────
+  RewriteRule ^shop$              shop.php     [L,QSA]
+  RewriteRule ^product$          product.php   [L,QSA]
+  RewriteRule ^app$              app.php       [L]
+
+  # ── SEO-friendly product URLs ────────────────────────────────
+  # e.g. /shop/phones/samsung-galaxy-s23-1001  →  product.php?id=1001
+  RewriteRule ^shop/([a-z0-9-]+)/([a-z0-9-]+-([0-9]+))$ product.php?id=$3 [L,QSA]
+
+  # ── Don't rewrite real files/dirs
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php [L,QSA]
+</IfModule>
+
+# ── Security headers ─────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options  "nosniff"
+  Header always set X-Frame-Options         "SAMEORIGIN"
+  Header always set X-XSS-Protection        "1; mode=block"
+  Header always set Referrer-Policy         "strict-origin-when-cross-origin"
+</IfModule>
+
+# ── Cache static assets ──────────────────────────────────────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpeg    "access plus 1 month"
+  ExpiresByType image/png     "access plus 1 month"
+  ExpiresByType image/webp    "access plus 1 month"
+  ExpiresByType text/css      "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# ── Protect sensitive files ──────────────────────────────────────
+<FilesMatch "\.(sql|log|env|json|md)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Exception: allow favicon manifest
+<Files "manifest.json">
+  Allow from all
+</Files>

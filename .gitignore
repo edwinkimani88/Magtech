@@ -1,0 +1,13 @@
+# Local logs and temp files
+*.log
+.DS_Store
+Thumbs.db
+tmp/
+
+# SQLite databases (optional local state)
+# config/magtech.sqlite
+
+# IDEs
+.idea/
+.vscode/
+*.swp

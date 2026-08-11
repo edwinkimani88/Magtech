@@ -1,0 +1,6 @@
+{
+  "name": "MagTech Investments",
+  "description": "Smart Kenyan electronics loan management, direct purchase inventory and unified marketplace platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

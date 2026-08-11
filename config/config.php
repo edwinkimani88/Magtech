@@ -1,0 +1,64 @@
+<?php
+// MagTech Application Configuration
+
+// API Security
+define('MAGTECH_API_KEY', 'mt_live_sk_your_secret_key_here_change_me');
+
+// Application URL (update with your live domain)
+define('APP_URL', 'http://localhost/Magtech');
+define('UPLOAD_URL', APP_URL . '/uploads/items/');
+define('UPLOAD_PATH', __DIR__ . '/../uploads/items/');
+
+// Business Information
+define('BUSINESS_NAME', 'MagTech Investments');
+define('BUSINESS_TAGLINE', 'Good Finds. Good Prices.');
+
+// Shop Branches
+define('SHOPS', [
+    'Shop 1' => [
+        'name'     => 'Shop 1 (Westlands)',
+        'location' => 'Westlands, Nairobi',
+        'phone'    => '+254712345678',
+        'whatsapp' => '+254712345678',
+        'maps_url' => 'https://maps.google.com/?q=Westlands+Nairobi',
+        'hours'    => 'Mon–Sat: 8:30am – 6:00pm',
+    ],
+    'Shop 2' => [
+        'name'     => 'Shop 2 (CBD)',
+        'location' => 'CBD, Nairobi',
+        'phone'    => '+254798765432',
+        'whatsapp' => '+254798765432',
+        'maps_url' => 'https://maps.google.com/?q=Nairobi+CBD',
+        'hours'    => 'Mon–Sat: 8:30am – 6:30pm',
+    ],
+]);
+
+// Marketplace Categories
+define('CATEGORIES', [
+    'Phones',
+    'Laptops',
+    'TVs & Audio',
+    'Gaming',
+    'Fridges & Appliances',
+    'Cookers',
+    'Home Appliances',
+    'Accessories',
+    'Other Electronics',
+]);
+
+// Pagination
+define('ITEMS_PER_PAGE', 20);
+
+// API Keys & Services
+define('OPENROUTER_API_KEY', getenv('OPENROUTER_API_KEY') ?: 'YOUR_OPENROUTER_API_KEY');
+define('SUPABASE_PUBLISHABLE_KEY', getenv('SUPABASE_PUBLISHABLE_KEY') ?: 'YOUR_SUPABASE_PUBLISHABLE_KEY');
+define('SUPABASE_SECRET_KEY', getenv('SUPABASE_SECRET_KEY') ?: 'YOUR_SUPABASE_SECRET_KEY');
+
+// APK Info (for /app route)
+define('APK_VERSION', '1.0.0');
+define('APK_RELEASE_DATE', '2026-08-01');
+define('APK_DOWNLOAD_URL', APP_URL . '/downloads/magtech-admin.apk');
+
+// Allow CORS from everywhere for API
+define('CORS_ORIGIN', '*');
+
