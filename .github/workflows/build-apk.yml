@@ -8,6 +8,7 @@ on:
 jobs:
   build-apk:
     name: Build Debug APK
+    runs-on: ubuntu-latest
     permissions:
       contents: write
 
@@ -24,16 +25,6 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('magtech app/gradle/libs.versions.toml', 'magtech app/build.gradle.kts', 'magtech app/app/build.gradle.kts') }}
-          restore-keys: |
-            gradle-
-
       - name: Create .env file from secrets
         working-directory: "magtech app"
         run: |
@@ -46,36 +37,48 @@ jobs:
           build-root-directory: "magtech app"
           arguments: assembleDebug --no-daemon --stacktrace
 
-      - name: Rename APK
+      - name: Verify & Copy Compiled APK
         run: |
           mkdir -p release-artifacts
-          cp "magtech app/app/build/outputs/apk/debug/app-debug.apk" "release-artifacts/magtech-admin.apk"
+          FOUND_APK=$(find "magtech app" -name "*.apk" -type f | head -n 1)
+          echo "Found APK file at: $FOUND_APK"
+          if [ -z "$FOUND_APK" ]; then
+            echo "::error::No compiled APK file was produced by Gradle build!"
+            exit 1
+          fi
+          cp "$FOUND_APK" "release-artifacts/magtech-admin.apk"
+          APK_BYTES=$(wc -c < "release-artifacts/magtech-admin.apk")
+          echo "Compiled APK size: $APK_BYTES bytes"
+          if [ "$APK_BYTES" -lt 1000000 ]; then
+            echo "::error::Compiled APK file size ($APK_BYTES bytes) is too small to be valid!"
+            exit 1
+          fi
           echo "APK_SIZE=$(du -sh release-artifacts/magtech-admin.apk | cut -f1)" >> $GITHUB_ENV
 
       - name: Get version info
         id: version
         run: |
-          echo "VERSION=1.0.$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "VERSION=1.0.0" >> $GITHUB_OUTPUT
           echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
           echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Delete existing 'latest' release (if any)
+      - name: Delete existing release tag if exists
         uses: dev-drprasad/delete-tag-and-release@v1.0
         with:
-          tag_name: latest
+          tag_name: v1.0.0
           github_token: ${{ secrets.GITHUB_TOKEN }}
           delete_release: true
         continue-on-error: true
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release v1.0.0
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: "MagTech Admin APK — v${{ steps.version.outputs.VERSION }}"
+          tag_name: v1.0.0
+          name: "MagTech Admin App — v1.0.0"
           body: |
-            ## 📱 MagTech Admin App — Debug Build
+            ## 📱 MagTech Admin App — Release Build
 
-            **Version:** ${{ steps.version.outputs.VERSION }}
+            **Version:** 1.0.0
             **Built:** ${{ steps.version.outputs.DATE }}
             **Commit:** ${{ steps.version.outputs.SHA }}
             **Size:** ${{ env.APK_SIZE }}
@@ -86,8 +89,6 @@ jobs:
             3. Enable **"Allow from this source"** for your browser/file manager
             4. Open the downloaded APK and tap **Install**
             5. Log in with your MagTech admin credentials
-
-            > ⚠️ This is a debug build for internal use only.
           files: release-artifacts/magtech-admin.apk
           prerelease: false
           make_latest: true

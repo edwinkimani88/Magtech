@@ -4,8 +4,8 @@ require_once __DIR__ . '/config/config.php';
 
 $localApk = __DIR__ . '/downloads/magtech-admin.apk';
 
-// 1. If local APK exists and is valid (> 100KB), serve it directly
-if (file_exists($localApk) && filesize($localApk) > 100000) {
+// 1. If local APK exists and is valid (> 1MB), serve it directly
+if (file_exists($localApk) && filesize($localApk) > 1000000) {
     header('Content-Type: application/vnd.android.package-archive');
     header('Content-Disposition: attachment; filename="magtech-admin.apk"');
     header('Content-Length: ' . filesize($localApk));
@@ -16,30 +16,86 @@ if (file_exists($localApk) && filesize($localApk) > 100000) {
     exit;
 }
 
-// 2. Otherwise stream/redirect from GitHub Release asset
-$releaseUrl = 'https://github.com/edwinkimani88/Magtech/releases/download/latest/magtech-admin.apk';
+// 2. GitHub Release Tag URL for v1.0.0
+$releaseUrl = 'https://github.com/edwinkimani88/Magtech/releases/download/v1.0.0/magtech-admin.apk';
 
-// Attempt to proxy/stream binary from GitHub to force direct attachment download
+// Check if the release asset URL is live and returns a valid binary (> 1MB)
 $ch = curl_init($releaseUrl);
+curl_setopt($ch, CURLOPT_NOBODY, true); // HEAD request
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_USERAGENT, 'MagTech-App-Downloader');
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-$apkContent = curl_exec($ch);
+curl_exec($ch);
 $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$contentLen = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
 curl_close($ch);
 
-if ($httpCode === 200 && !empty($apkContent) && strlen($apkContent) > 100000) {
-    header('Content-Type: application/vnd.android.package-archive');
-    header('Content-Disposition: attachment; filename="magtech-admin.apk"');
-    header('Content-Length: ' . strlen($apkContent));
-    header('Cache-Control: no-cache, must-revalidate');
-    header('Pragma: no-cache');
-    header('Expires: 0');
-    echo $apkContent;
+if ($httpCode === 200 && $contentLen > 1000000) {
+    // Valid APK file exists on GitHub Releases — redirect to direct download
+    header('Location: ' . $releaseUrl);
     exit;
 }
 
-// Fallback redirect if cURL streaming fails
-header('Location: ' . $releaseUrl);
-exit;
+// 3. Fallback screen if release build is still running or compiling
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building MagTech Admin APK...</title>
+  <meta http-equiv="refresh" content="10;url=<?= APP_URL ?>/download.php">
+  <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/main.css">
+  <style>
+    body {
+      background: var(--teal-950, #041f1e);
+      color: #fff;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+      text-align: center;
+    }
+    .status-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      padding: 2.5rem;
+      max-width: 440px;
+      width: 100%;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255,255,255,.1);
+      border-top-color: var(--teal-400, #2dd4bf);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h2 { margin: 0 0 .5rem; font-size: 1.25rem; font-weight: 600; }
+    p { color: rgba(255,255,255,.7); font-size: .9rem; line-height: 1.5; margin-bottom: 1.5rem; }
+    .btn-retry {
+      display: inline-block;
+      background: #2dd4bf;
+      color: #041f1e;
+      font-weight: 600;
+      padding: .75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="status-card">
+    <div class="spinner"></div>
+    <h2>Building MagTech Admin APK</h2>
+    <p>The latest Android application APK build is currently processing on GitHub Actions.<br>This page will auto-retry in 10 seconds...</p>
+    <a href="<?= APP_URL ?>/download.php" class="btn-retry">🔄 Check Now</a>
+  </div>
+</body>
+</html>
