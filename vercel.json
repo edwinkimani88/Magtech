@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "functions": {
+    "api/**/*.php": {
+      "runtime": "vercel-php@0.7.3"
+    },
+    "*.php": {
+      "runtime": "vercel-php@0.7.3"
+    }
+  },
+  "routes": [
+    { "src": "/api/v1/marketplace/sync", "dest": "/api/v1/marketplace/sync.php" },
+    { "src": "/api/v1/marketplace/photos/upload", "dest": "/api/v1/marketplace/photos.php" },
+    { "src": "/api/v1/public/items", "dest": "/api/v1/public/items.php" },
+    { "src": "/api/v1/public/items/(.*)", "dest": "/api/v1/public/item.php?id=$1" },
+    { "src": "/shop", "dest": "/shop.php" },
+    { "src": "/product", "dest": "/product.php" },
+    { "src": "/app", "dest": "/app.php" },
+    { "src": "/setup", "dest": "/setup.php" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/downloads/(.*)", "dest": "/downloads/$1" },
+    { "src": "/(.*)", "dest": "/index.php" }
+  ]
+}
