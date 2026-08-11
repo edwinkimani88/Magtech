@@ -5,6 +5,7 @@
     { "src": "shop.php", "use": "vercel-php@0.7.3" },
     { "src": "product.php", "use": "vercel-php@0.7.3" },
     { "src": "app.php", "use": "vercel-php@0.7.3" },
+    { "src": "download.php", "use": "vercel-php@0.7.3" },
     { "src": "setup.php", "use": "vercel-php@0.7.3" },
     { "src": "api/v1/marketplace/sync.php", "use": "vercel-php@0.7.3" },
     { "src": "api/v1/marketplace/photos.php", "use": "vercel-php@0.7.3" },
@@ -23,6 +24,7 @@
     { "src": "/shop", "dest": "/shop.php" },
     { "src": "/product", "dest": "/product.php" },
     { "src": "/app", "dest": "/app.php" },
+    { "src": "/download", "dest": "/download.php" },
     { "src": "/setup", "dest": "/setup.php" },
     { "src": "/(.*)", "dest": "/index.php" }
   ]
