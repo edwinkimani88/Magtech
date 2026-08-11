@@ -15,6 +15,7 @@ Options +FollowSymLinks
   RewriteRule ^shop$              shop.php     [L,QSA]
   RewriteRule ^product$          product.php   [L,QSA]
   RewriteRule ^app$              app.php       [L]
+  RewriteRule ^download$         download.php  [L,QSA]
 
   # ── SEO-friendly product URLs ────────────────────────────────
   # e.g. /shop/phones/samsung-galaxy-s23-1001  →  product.php?id=1001
