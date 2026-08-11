@@ -1,6 +1,6 @@
 <?php
 $pageTitle       = $pageTitle ?? 'MagTech Investments — Good Finds. Good Prices.';
-$pageDescription = $pageDescription ?? 'Nairobi\'s premium second-hand electronics marketplace. Quality phones, laptops, TVs, fridges and more from Shop 1 (Westlands) and Shop 2 (CBD).';
+$pageDescription = $pageDescription ?? 'Kitengela\'s premier second-hand electronics marketplace. Quality phones, laptops, TVs, fridges and more from Shop 1 (Chairman) and Shop 2 (Deliverance Road).';
 $pageUrl         = $pageUrl ?? (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $pageImage       = $pageImage ?? APP_URL . '/assets/img/hero.png';
 ?>
@@ -158,8 +158,8 @@ $pageImage       = $pageImage ?? APP_URL . '/assets/img/hero.png';
           <li><a href="<?= APP_URL ?>/shop?category=<?= urlencode($cat) ?>"><?= categoryIcon($cat) ?> <?= htmlspecialchars($cat) ?></a></li>
           <?php endforeach; ?>
           <li class="mobile-nav__divider">Branches</li>
-          <li><a href="<?= APP_URL ?>/shop?shop_location=Shop+1">📍 Shop 1 — Westlands</a></li>
-          <li><a href="<?= APP_URL ?>/shop?shop_location=Shop+2">📍 Shop 2 — CBD</a></li>
+          <li><a href="<?= APP_URL ?>/shop?shop_location=Shop+1">📍 Shop 1 — Chairman, Kitengela</a></li>
+          <li><a href="<?= APP_URL ?>/shop?shop_location=Shop+2">📍 Shop 2 — Deliverance Rd, Kitengela</a></li>
         </ul>
       </nav>
       <div class="mobile-nav__footer">

@@ -81,7 +81,7 @@ try {
 // ── SEO ─────────────────────────────────────────────────────────
 $titlePart = $search ? "Search: {$search}" : ($category !== 'All' ? $category : 'All Products');
 $pageTitle  = "{$titlePart} — MagTech Marketplace";
-$pageDescription = "Browse {$titlePart} at MagTech Investments. Quality second-hand electronics in Nairobi — Westlands & CBD.";
+$pageDescription = "Browse {$titlePart} at MagTech Investments. Quality second-hand electronics in Kitengela — Chairman Road & Deliverance Road.";
 $activePage = 'shop';
 
 require_once __DIR__ . '/includes/header.php';
@@ -110,11 +110,11 @@ require_once __DIR__ . '/includes/header.php';
     <!-- Shop filter -->
     <a href="<?= APP_URL ?>/shop?<?= $category !== 'All' ? 'category='.urlencode($category).'&' : '' ?>shop_location=Shop+1"
        class="filter-chip <?= $shopLoc === 'Shop 1' ? 'is-active' : '' ?>">
-      📍 Westlands
+      📍 Chairman
     </a>
     <a href="<?= APP_URL ?>/shop?<?= $category !== 'All' ? 'category='.urlencode($category).'&' : '' ?>shop_location=Shop+2"
        class="filter-chip <?= $shopLoc === 'Shop 2' ? 'is-active' : '' ?>">
-      📍 CBD
+      📍 Deliverance Rd
     </a>
 
     <!-- Sort -->
@@ -187,7 +187,7 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="sidebar-section">
           <div class="sidebar-title">Branch</div>
-          <?php foreach (['All' => 'Both Branches', 'Shop 1' => '📍 Shop 1 (Westlands)', 'Shop 2' => '📍 Shop 2 (CBD)'] as $val => $label): ?>
+          <?php foreach (['All' => 'Both Branches', 'Shop 1' => '📍 Shop 1 (Chairman)', 'Shop 2' => '📍 Shop 2 (Deliverance Rd)'] as $val => $label): ?>
           <a href="<?= APP_URL ?>/shop?<?= $category !== 'All' ? 'category='.urlencode($category).'&' : '' ?>shop_location=<?= urlencode($val) ?>"
              class="sidebar-option <?= $shopLoc === $val ? 'is-active' : '' ?>">
             <?= htmlspecialchars($label) ?>

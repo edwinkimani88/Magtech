@@ -2,7 +2,7 @@
 
 # MagTech Investments — Web Marketplace & REST API
 
-The official Web Marketplace storefront and synchronization backend for **MagTech Investments** (Nairobi, Kenya — Shop 1 Westlands & Shop 2 CBD).
+The official Web Marketplace storefront and synchronization backend for **MagTech Investments** (Kitengela, Kenya — Shop 1 Chairman & Shop 2 Deliverance Road).
 
 ## 🚀 Overview
 
@@ -10,7 +10,7 @@ This web marketplace connects seamlessly with the **MagTech Android Admin App**.
 
 ### Features
 - **Editorial Deep Teal UI**: Designed following custom editorial principles using modern CSS custom properties and GSAP animations.
-- **Branch-Specific Shopping**: Filter products and contact specific branches directly (**Shop 1: Westlands**, **Shop 2: CBD**).
+- **Branch-Specific Shopping**: Filter products and contact specific branches directly (**Shop 1: Chairman, Kitengela**, **Shop 2: Deliverance Road, Kitengela**).
 - **Direct WhatsApp & Phone Actions**: Pre-formatted Swahili/English messages sent directly to the branch stocking the item.
 - **REST Synchronization API**: Mobile app integration endpoints for live item state updates, availability toggling, and photo uploads.
 - **Multi-Photo Interactive Gallery**: Lightbox image viewing with thumb navigation.

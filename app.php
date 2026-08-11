@@ -3,7 +3,7 @@
 // URL: /app — not linked in main navigation
 require_once __DIR__ . '/config/config.php';
 
-$pageTitle = 'MagTech Admin App — Internal Access';
+$pageTitle = 'Download MagTech Admin App — Android APK';
 $bodyClass = 'app-page-body';
 ?>
 <!DOCTYPE html>
@@ -57,8 +57,8 @@ $bodyClass = 'app-page-body';
 
   <div class="app-card">
     <div class="app-card__logo">⚡</div>
-    <h1 class="app-card__title">MagTech Admin</h1>
-    <p class="app-card__subtitle">Authorised internal access only.</p>
+    <h1 class="app-card__title">MagTech Admin App</h1>
+    <p class="app-card__subtitle">Manage inventory for MagTech Investments — Kitengela.<br>Available for Android devices.</p>
 
     <div class="app-card__version">
       📦 Version <?= APK_VERSION ?> · Released <?= APK_RELEASE_DATE ?>

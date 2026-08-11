@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/includes/functions.php';
 
 $pageTitle       = 'MagTech Investments — Good Finds. Good Prices. | Nairobi Electronics';
-$pageDescription = 'Browse quality second-hand phones, laptops, TVs, fridges & more at MagTech Investments. Two branches in Westlands and CBD Nairobi. Real prices, real inventory.';
+$pageDescription = 'Browse quality second-hand phones, laptops, TVs, fridges & more at MagTech Investments. Two branches in Kitengela — Chairman Road & Deliverance Road. Real prices, real inventory.';
 $activePage      = 'home';
 
 // Fetch data from DB
@@ -23,7 +23,7 @@ require_once __DIR__ . '/includes/header.php';
     <!-- Content -->
     <div class="hero__content">
       <div class="hero__eyebrow">
-        <span>🏪</span> Two branches · Westlands & CBD
+        <span>🏪</span> Two branches · Kitengela
       </div>
 
       <h1 class="hero__title display-title">
@@ -54,7 +54,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
         <div>
           <div class="hero__stat-num">2</div>
-          <div class="hero__stat-label">Nairobi branches</div>
+          <div class="hero__stat-label">Kitengela branches</div>
         </div>
         <div>
           <div class="hero__stat-num">5★</div>
@@ -77,7 +77,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="hero__chip-icon">📍</div>
         <div>
           <div style="font-size:11px;font-weight:700">Shop 1</div>
-          <div style="font-size:10px;color:#666">Westlands</div>
+          <div style="font-size:10px;color:#666">Chairman, Kitengela</div>
         </div>
       </div>
 
@@ -115,8 +115,8 @@ require_once __DIR__ . '/includes/header.php';
     <div class="trust-item">
       <span class="trust-item__icon">📍</span>
       <div>
-        <div class="trust-item__title">2 Nairobi Branches</div>
-        <div class="trust-item__desc">Westlands & CBD — walk in anytime</div>
+        <div class="trust-item__title">2 Kitengela Branches</div>
+        <div class="trust-item__desc">Chairman & Deliverance Rd — walk in anytime</div>
       </div>
     </div>
     <div class="trust-item">
@@ -438,10 +438,10 @@ require_once __DIR__ . '/includes/header.php';
       </div>
       <div style="display:flex;flex-direction:column;gap:1rem;flex-shrink:0">
         <a href="https://wa.me/254712345678" class="btn btn--light btn--lg" target="_blank">
-          💬 WhatsApp Shop 1 (Westlands)
+          💬 WhatsApp Shop 1 (Chairman)
         </a>
         <a href="https://wa.me/254798765432" class="btn btn--light btn--lg" target="_blank">
-          💬 WhatsApp Shop 2 (CBD)
+          💬 WhatsApp Shop 2 (Deliverance Rd)
         </a>
       </div>
     </div>
@@ -454,10 +454,10 @@ require_once __DIR__ . '/includes/header.php';
 <section class="section section--muted" aria-label="Our branches">
   <div class="container">
     <div class="section-header text-center" style="max-width:560px;margin-inline:auto;text-align:center">
-      <span class="section-label">Visit Us</span>
+      <span class="section-label">Visit Us in Kitengela</span>
       <h2 class="section-heading">Two Shops, One MagTech</h2>
       <p class="section-subheading" style="margin:1rem auto 0;text-align:center">
-        Both branches are fully stocked and open six days a week.
+        Both branches are fully stocked and open six days a week in Kitengela.
         Walk in, browse, and negotiate directly with our team.
       </p>
     </div>
@@ -471,7 +471,7 @@ require_once __DIR__ . '/includes/header.php';
           <span class="shop-card__badge"><?= htmlspecialchars($shop['name']) ?></span>
         </div>
         <h3 class="shop-card__name"><?= htmlspecialchars($shop['location']) ?></h3>
-        <p class="shop-card__address">Nairobi, Kenya</p>
+        <p class="shop-card__address">Kitengela, Kenya</p>
         <p class="shop-card__hours" style="margin-top:.5rem">⏰ <?= htmlspecialchars($shop['hours']) ?></p>
 
         <div class="shop-card__contacts">
