@@ -4,8 +4,11 @@
 // API Security
 define('MAGTECH_API_KEY', 'mt_live_sk_your_secret_key_here_change_me');
 
-// Application URL (update with your live domain)
-define('APP_URL', 'http://localhost/Magtech');
+// Dynamic Application URL detection (supports local XAMPP and Vercel production)
+$proto = (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+$host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$path  = (str_contains($host, 'localhost') || str_contains($host, '127.0.0.1')) ? '/Magtech' : '';
+define('APP_URL', rtrim("{$proto}://{$host}{$path}", '/'));
 define('UPLOAD_URL', APP_URL . '/uploads/items/');
 define('UPLOAD_PATH', __DIR__ . '/../uploads/items/');
 

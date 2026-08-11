@@ -12,6 +12,8 @@
     { "src": "api/v1/public/item.php", "use": "vercel-php@0.7.3" }
   ],
   "routes": [
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/downloads/(.*)", "dest": "/downloads/$1" },
     { "src": "/api/v1/marketplace/sync", "dest": "/api/v1/marketplace/sync.php" },
     { "src": "/api/v1/marketplace/photos/upload", "dest": "/api/v1/marketplace/photos.php" },
     { "src": "/api/v1/public/items", "dest": "/api/v1/public/items.php" },
@@ -20,8 +22,6 @@
     { "src": "/product", "dest": "/product.php" },
     { "src": "/app", "dest": "/app.php" },
     { "src": "/setup", "dest": "/setup.php" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/downloads/(.*)", "dest": "/downloads/$1" },
     { "src": "/(.*)", "dest": "/index.php" }
   ]
 }
