@@ -59,8 +59,8 @@ define('SUPABASE_SECRET_KEY', getenv('SUPABASE_SECRET_KEY') ?: 'YOUR_SUPABASE_SE
 
 // APK Info (for /app route)
 define('APK_VERSION', '1.0.0');
-define('APK_RELEASE_DATE', '2026-08-01');
-define('APK_DOWNLOAD_URL', APP_URL . '/downloads/magtech-admin.apk');
+define('APK_RELEASE_DATE', '2026-08-11');
+define('APK_DOWNLOAD_URL', 'https://github.com/edwinkimani88/Magtech/releases/download/latest/magtech-admin.apk');
 
 // Allow CORS from everywhere for API
 define('CORS_ORIGIN', '*');

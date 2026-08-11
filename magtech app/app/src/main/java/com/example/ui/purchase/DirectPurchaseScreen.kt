@@ -94,7 +94,7 @@ fun DirectPurchaseScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = if (shop == "Shop 1") "Shop 1 (Westlands)" else "Shop 2 (CBD)",
+                            text = if (shop == "Shop 1") "Shop 1 (Chairman Rd)" else "Shop 2 (Deliverance Rd)",
                             fontSize = 12.sp,
                             fontWeight = if (isSel) FontWeight.Bold else FontWeight.Normal,
                             color = if (isSel) TextOnTerracotta else Color.White

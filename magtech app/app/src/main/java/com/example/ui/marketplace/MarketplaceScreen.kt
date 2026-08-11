@@ -70,7 +70,7 @@ fun MarketplaceScreen(
 
             // Shop Filter Row (All MagTech | Shop 1 | Shop 2)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("All" to "All MagTech Stock", "Shop 1" to "📍 Shop 1 (Westlands)", "Shop 2" to "📍 Shop 2 (CBD)").forEach { (shopKey, label) ->
+                listOf("All" to "All MagTech Stock", "Shop 1" to "📍 Shop 1 (Chairman Rd)", "Shop 2" to "📍 Shop 2 (Deliverance Rd)").forEach { (shopKey, label) ->
                     val isSel = uiState.selectedShopFilter == shopKey
                     FilterChip(
                         selected = isSel,
@@ -195,7 +195,7 @@ fun MarketplaceItemCard(
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
                                 Text(
-                                    text = if (item.shopLocation == "Shop 1") "📍 Shop 1 (Westlands)" else "📍 Shop 2 (CBD)",
+                                    text = if (item.shopLocation == "Shop 1") "📍 Shop 1 (Chairman Rd)" else "📍 Shop 2 (Deliverance Rd)",
                                     fontSize = 10.sp,
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold

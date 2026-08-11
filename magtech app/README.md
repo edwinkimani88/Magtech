@@ -1,22 +1,56 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# MagTech Investments - Mobile Admin & Pawnshop Management App
 
-# Run and deploy your AI Studio app
+A native Android application built with **Kotlin** and **Jetpack Compose** for **MagTech Investments** (Nairobi, Kenya). The app streamlines inventory management, pawn loans, direct buy-ins, automated market valuations, and online marketplace publishing across two physical branches: **Shop 1 (Chairman Road)** and **Shop 2 (Deliverance Road)**.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/d8d1a613-5cd5-42b0-86e4-7da470f3dc37
+## 📲 How to Download & Install the APK from GitHub
 
-## Run Locally
+Whenever code is pushed to this GitHub repository, **GitHub Actions** automatically compiles the Android APK binary.
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+### Option 1: Download latest build from GitHub Actions (Artifacts)
+1. Go to the **Actions** tab at the top of this GitHub repository.
+2. Click on the latest workflow run named **"Build & Release Android APK"**.
+3. Scroll down to the **Artifacts** section at the bottom of the page.
+4. Click on **`MagTech-Investments-Debug-APK`** to download the ZIP package containing `app-debug.apk`.
+5. Unzip the file, transfer `app-debug.apk` to your Android phone, and install it!
 
+### Option 2: Download from GitHub Releases
+1. Navigate to the **Releases** section on the right sidebar of the repository (`/releases`).
+2. Download `app-debug.apk` under the Assets section of the latest release version.
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
-7. If you have already published your app in AI Studio, please [request upload key reset](https://support.google.com/googleplay/android-developer/answer/9842756#zippy=%2Crequest-an-upload-key-reset) in Google Play Console.
+---
+
+## 🚀 Pushing Code Updates from Google AI Studio to GitHub
+
+If you are editing or updating this application inside **Google AI Studio**:
+
+1. Click the **Export** button in the top toolbar or navigation menu.
+2. Select **Push to GitHub**.
+3. Authorize your GitHub account or select your target repository (`username/repository-name`).
+4. Once pushed, GitHub Actions will automatically trigger a new build and produce a downloadable APK file!
+
+---
+
+## 🛠️ Building the APK Locally (Android Studio)
+
+If you clone this repository to build on your machine:
+
+1. Open the project folder in **Android Studio (Ladybug or newer)**.
+2. Let Gradle sync dependencies automatically.
+3. Build the APK via terminal:
+   ```bash
+   ./gradlew assembleDebug
+   ```
+4. Find the generated APK at:
+   `app/build/outputs/apk/debug/app-debug.apk`
+
+---
+
+## ✨ Key Features
+
+- **Dual Branch Management**: Switch seamlessly between **Shop 1 (Chairman Road)** and **Shop 2 (Deliverance Road)** with shop-filtered sales data, active loan balances, and audit feeds.
+- **In-App Camera Photography**: Capture 2–4 physical photos per collateral item directly using native camera intents.
+- **AI Valuations & Sheng Draft SMS**: Powered by OpenRouter (`gpt-4o-mini`) to evaluate market pricing for electronics and draft customer loan payment reminders in authentic Nairobi Sheng.
+- **Room Database Persistence**: Fully offline-capable local SQLite database tracking customers, loan agreements, forfeitures, and direct buy-ins.
+- **Web Marketplace Catalog Sync**: Built-in marketplace publishing flag and location badges (`📍 Shop 1` / `📍 Shop 2`) to sync inventory with the central web store.

@@ -76,7 +76,7 @@ abstract class MagTechDatabase : RoomDatabase() {
                     fullName = "Brian Omondi Onyango",
                     nationalId = "34892104",
                     phoneNumber = "0722123456",
-                    notes = "Regular customer, very reliable. Works in Westlands."
+                    notes = "Regular customer, very reliable. Works on Chairman Road."
                 )
             )
             val c2Id = customerDao.insertCustomer(

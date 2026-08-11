@@ -109,8 +109,8 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 listOf(
-                    "Admin — Shop 1" to "Westlands Branch",
-                    "Admin — Shop 2" to "CBD Branch"
+                    "Admin — Shop 1" to "Chairman Road Branch",
+                    "Admin — Shop 2" to "Deliverance Road Branch"
                 ).forEach { (role, branch) ->
                     val isSelected = selectedRole == role
                     Box(

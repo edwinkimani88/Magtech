@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 data class AuthState(
     val isLoggedIn: Boolean = false,
     val userRole: String = "Admin — Shop 1", // "Admin — Shop 1" or "Admin — Shop 2"
-    val userName: String = "Admin Shop 1 (Westlands)",
+    val userName: String = "Admin Shop 1 (Chairman Road)",
     val defaultShop: String = "Shop 1", // "Shop 1" or "Shop 2"
     val pin: String = "",
     val error: String? = null
@@ -24,7 +24,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         AuthState(
             isLoggedIn = prefs.getBoolean("is_logged_in", false),
             userRole = prefs.getString("user_role", "Admin — Shop 1") ?: "Admin — Shop 1",
-            userName = prefs.getString("user_name", "Admin Shop 1 (Westlands)") ?: "Admin Shop 1 (Westlands)",
+            userName = prefs.getString("user_name", "Admin Shop 1 (Chairman Road)") ?: "Admin Shop 1 (Chairman Road)",
             defaultShop = prefs.getString("default_shop", "Shop 1") ?: "Shop 1"
         )
     )
@@ -33,7 +33,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     fun loginWithPin(enteredPin: String, selectedRole: String, rememberMe: Boolean = true): Boolean {
         if (enteredPin == "1234" || enteredPin.length == 4) {
             val shop = if (selectedRole.contains("Shop 2")) "Shop 2" else "Shop 1"
-            val name = if (shop == "Shop 1") "Admin Shop 1 (Westlands)" else "Admin Shop 2 (CBD)"
+            val name = if (shop == "Shop 1") "Admin Shop 1 (Chairman Road)" else "Admin Shop 2 (Deliverance Road)"
 
             _uiState.value = _uiState.value.copy(
                 isLoggedIn = true,
