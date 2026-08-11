@@ -1,13 +1,16 @@
 {
   "version": 2,
-  "functions": {
-    "api/**/*.php": {
-      "runtime": "vercel-php@0.7.3"
-    },
-    "*.php": {
-      "runtime": "vercel-php@0.7.3"
-    }
-  },
+  "builds": [
+    { "src": "index.php", "use": "vercel-php@0.7.3" },
+    { "src": "shop.php", "use": "vercel-php@0.7.3" },
+    { "src": "product.php", "use": "vercel-php@0.7.3" },
+    { "src": "app.php", "use": "vercel-php@0.7.3" },
+    { "src": "setup.php", "use": "vercel-php@0.7.3" },
+    { "src": "api/v1/marketplace/sync.php", "use": "vercel-php@0.7.3" },
+    { "src": "api/v1/marketplace/photos.php", "use": "vercel-php@0.7.3" },
+    { "src": "api/v1/public/items.php", "use": "vercel-php@0.7.3" },
+    { "src": "api/v1/public/item.php", "use": "vercel-php@0.7.3" }
+  ],
   "routes": [
     { "src": "/api/v1/marketplace/sync", "dest": "/api/v1/marketplace/sync.php" },
     { "src": "/api/v1/marketplace/photos/upload", "dest": "/api/v1/marketplace/photos.php" },
