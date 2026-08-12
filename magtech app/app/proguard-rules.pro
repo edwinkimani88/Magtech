@@ -1,4 +1,8 @@
-# Add project specific ProGuard rules here.
+# Keep all classes in com.example
+-keep class com.example.** { *; }
+-keepclassmembers class com.example.** { *; }
+-keep class com.example.MainActivity { *; }
+
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
 #

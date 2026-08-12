@@ -28,10 +28,9 @@ class SupabaseService(private val context: Context) {
     }
 
     private val supabaseKey: String = try {
-        val key = BuildConfig.SUPABASE_PUBLISHABLE_KEY
-        if (key.isNotBlank()) key else "sb_publishable_kfC4xEsQAYv78utikNsGIg_PQxBQYCi"
+        BuildConfig.SUPABASE_PUBLISHABLE_KEY
     } catch (e: Exception) {
-        "sb_publishable_kfC4xEsQAYv78utikNsGIg_PQxBQYCi"
+        ""
     }
 
     private val okHttpClient = OkHttpClient.Builder()
