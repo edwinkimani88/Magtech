@@ -11,3 +11,6 @@ tmp/
 .idea/
 .vscode/
 *.swp
+
+magtech App.zip
+*.zip
