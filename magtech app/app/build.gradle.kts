@@ -8,7 +8,7 @@ plugins {
 
 android {
   namespace = "com.aistudio.magtechinvestments.nbi26"
-  compileSdk = 34
+  compileSdk = 36
 
   defaultConfig {
     applicationId = "com.aistudio.magtechinvestments.nbi26"
