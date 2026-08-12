@@ -1,4 +1,4 @@
-package com.example
+package com.aistudio.magtechinvestments.nbi26
 
 import org.junit.Assert.*
 import org.junit.Test

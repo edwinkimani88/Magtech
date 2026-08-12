@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-  namespace = "com.example"
+  namespace = "com.aistudio.magtechinvestments.nbi26"
   compileSdk = 36
 
   defaultConfig {

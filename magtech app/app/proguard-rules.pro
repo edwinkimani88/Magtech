@@ -1,7 +1,7 @@
-# Keep all classes in com.example
--keep class com.example.** { *; }
--keepclassmembers class com.example.** { *; }
--keep class com.example.MainActivity { *; }
+# Keep all classes in com.aistudio.magtechinvestments.nbi26
+-keep class com.aistudio.magtechinvestments.nbi26.** { *; }
+-keepclassmembers class com.aistudio.magtechinvestments.nbi26.** { *; }
+-keep class com.aistudio.magtechinvestments.nbi26.MainActivity { *; }
 
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
