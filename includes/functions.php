@@ -26,31 +26,76 @@ function conditionClass(string $cond): string {
  */
 function whatsappLink(array $item): string {
     $phone   = preg_replace('/\D/', '', $item['shop_contact_phone'] ?? '254712345678');
-    $name    = urlencode($item['item_name']);
     $price   = formatPrice($item['marketplace_price']);
-    $branch  = urlencode($item['shop_branch_name'] ?? $item['shop_location']);
-    $msg     = urlencode("Hujambo MagTech! Nimeona {$item['item_name']} ({$price}) kwenye website yenu. Bado iko {$item['shop_branch_name']}?");
+    $branch  = $item['shop_branch_name'] ?? $item['shop_location'] ?? 'MagTech';
+    $msg     = urlencode("Hujambo MagTech! Nimeona {$item['item_name']} ({$price}) kwenye website yenu. Bado iko {$branch}?");
     return "https://wa.me/{$phone}?text={$msg}";
 }
 
 /**
- * Get primary photo URL (with fallback)
+ * Get primary photo URL (with APP_URL prepended if relative)
  */
-function primaryPhoto(array $item, string $fallback = 'assets/img/placeholder.jpg'): string {
+function primaryPhoto(array $item, string $fallback = ''): string {
     $photos = is_array($item['photo_urls'])
         ? $item['photo_urls']
         : (json_decode($item['photo_urls'] ?? '[]', true) ?: []);
-    return !empty($photos) ? $photos[0] : $fallback;
+
+    if (empty($fallback)) {
+        $fallback = APP_URL . '/assets/img/placeholder.jpg';
+    }
+
+    if (empty($photos)) {
+        return $fallback;
+    }
+
+    $url = $photos[0];
+    // Prepend APP_URL only if it's a relative path (not already http:// or //)
+    if (!str_starts_with($url, 'http') && !str_starts_with($url, '//')) {
+        $url = APP_URL . '/' . ltrim($url, '/');
+    }
+    return $url;
 }
 
 /**
- * Slugify item name for SEO-friendly URLs
+ * Resolve all photo URLs for an item (with APP_URL prefix if relative)
+ */
+function allPhotos(array $item, string $fallback = ''): array {
+    if (empty($fallback)) {
+        $fallback = APP_URL . '/assets/img/placeholder.jpg';
+    }
+    $photos = is_array($item['photo_urls'])
+        ? $item['photo_urls']
+        : (json_decode($item['photo_urls'] ?? '[]', true) ?: []);
+
+    if (empty($photos)) {
+        return [$fallback];
+    }
+
+    return array_map(function (string $url): string {
+        if (!str_starts_with($url, 'http') && !str_starts_with($url, '//')) {
+            return APP_URL . '/' . ltrim($url, '/');
+        }
+        return $url;
+    }, $photos);
+}
+
+/**
+ * Slugify item name for SEO-friendly URLs.
+ * NOTE: The canonical product URL always uses remote_item_id (integer),
+ * ensuring product.php can always resolve the correct record.
  */
 function itemSlug(array $item): string {
     $slug = strtolower($item['item_name']);
     $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
     $slug = preg_replace('/\s+/', '-', trim($slug));
     return $slug . '-' . $item['remote_item_id'];
+}
+
+/**
+ * Canonical URL for a product (always by remote_item_id).
+ */
+function productUrl(array $item): string {
+    return APP_URL . '/product?id=' . (int)$item['remote_item_id'];
 }
 
 /**
@@ -105,11 +150,13 @@ function categoryIcon(string $cat): string {
         str_contains($cat, 'Phone')    => '📱',
         str_contains($cat, 'Laptop')   => '💻',
         str_contains($cat, 'TV')       => '📺',
+        str_contains($cat, 'Audio')    => '🔊',
         str_contains($cat, 'Gaming')   => '🎮',
+        str_contains($cat, 'Kitchen')  => '🍳',
         str_contains($cat, 'Fridge')   => '❄️',
         str_contains($cat, 'Cooker')   => '🍳',
         str_contains($cat, 'Appliance')=> '🏠',
-        str_contains($cat, 'Audio')    => '🔊',
+        str_contains($cat, 'Accessor') => '🎧',
         default                         => '⚡',
     };
 }

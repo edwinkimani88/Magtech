@@ -41,6 +41,9 @@ fun ItemDetailScreen(
     val loan = uiState.loan
     val customer = uiState.customer
 
+    var showExtendDialog by remember { mutableStateOf(false) }
+    var renewalFeeInput by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -149,21 +152,6 @@ fun ItemDetailScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Divider(color = DarkBorder)
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Column {
-                                Text("Market Resale Value", fontSize = 11.sp, color = TextSecondary)
-                                Text("KSh ${item.estimatedMarketValue.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            }
-                            Column {
-                                Text("Forced Sale Value", fontSize = 11.sp, color = TextSecondary)
-                                Text("KSh ${item.forcedSaleValue.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = AccentOrange)
-                            }
-                        }
-
                         if (item.notes.isNotBlank()) {
                             Spacer(modifier = Modifier.height(12.dp))
                             Text("Notes: ${item.notes}", fontSize = 12.sp, color = TextSecondary)
@@ -238,15 +226,31 @@ fun ItemDetailScreen(
                             Spacer(modifier = Modifier.height(16.dp))
 
                             if (balance > 0) {
-                                Button(
-                                    onClick = { showPaymentDialog = true },
-                                    colors = ButtonDefaults.buttonColors(containerColor = AccentGreen),
-                                    shape = RoundedCornerShape(14.dp),
-                                    modifier = Modifier.fillMaxWidth()
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Icon(Icons.Default.Payment, contentDescription = null, tint = TextOnTerracotta)
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Record Loan Repayment (Lipa Balance)", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextOnTerracotta)
+                                    Button(
+                                        onClick = { showPaymentDialog = true },
+                                        colors = ButtonDefaults.buttonColors(containerColor = AccentGreen),
+                                        shape = RoundedCornerShape(14.dp),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(Icons.Default.Payment, contentDescription = null, tint = TextOnTerracotta)
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Lipa Balance", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextOnTerracotta)
+                                    }
+
+                                    Button(
+                                        onClick = { showExtendDialog = true },
+                                        colors = ButtonDefaults.buttonColors(containerColor = TerracottaPeach),
+                                        shape = RoundedCornerShape(14.dp),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(Icons.Default.Schedule, contentDescription = null, tint = TextOnTerracotta)
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Extend / Renew", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextOnTerracotta)
+                                    }
                                 }
                             }
                         }
@@ -321,6 +325,49 @@ fun ItemDetailScreen(
                 },
                 dismissButton = {
                     TextButton(onClick = { showPaymentDialog = false }) {
+                        Text("Ghairi", color = TextSecondary)
+                    }
+                },
+                containerColor = DarkSurface
+            )
+        }
+
+        // Loan Extension / Renewal Dialog
+        if (showExtendDialog) {
+            AlertDialog(
+                onDismissRequest = { showExtendDialog = false },
+                title = { Text("Extend / Renew Loan Due Date", color = Color.White) },
+                text = {
+                    Column {
+                        Text("Ingiza Ada ya Renewal/Extension (KSh):", fontSize = 12.sp, color = TextSecondary)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = renewalFeeInput,
+                            onValueChange = { renewalFeeInput = it },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            colors = textFieldColors()
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text("Hii itaongeza tarehe ya due date kwa siku 14 na marekebisho yatarekodiwa Supabase.", fontSize = 11.sp, color = TerracottaPeach)
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val fee = renewalFeeInput.toDoubleOrNull() ?: 0.0
+                            if (fee >= 0) {
+                                viewModel.extendLoan(fee, extensionDays = 14)
+                                showExtendDialog = false
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = TerracottaPeach)
+                    ) {
+                        Text("Extend Siku 14", color = TextOnTerracotta)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showExtendDialog = false }) {
                         Text("Ghairi", color = TextSecondary)
                     }
                 },

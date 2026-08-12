@@ -53,11 +53,20 @@ class ItemDetailViewModel(
         }
     }
 
-    fun recordRepayment(amount: Double) {
+    fun recordRepayment(amount: Double, adminUser: String = "Admin") {
         val loan = _uiState.value.loan ?: return
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isRecordingPayment = true)
-            repository.recordLoanPayment(loan.id, amount)
+            repository.recordLoanPayment(loan.id, amount, adminUser)
+            loadItemDetails()
+        }
+    }
+
+    fun extendLoan(renewalFee: Double, extensionDays: Int = 14, adminUser: String = "Admin") {
+        val loan = _uiState.value.loan ?: return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isRecordingPayment = true)
+            repository.extendLoan(loan.id, renewalFee, extensionDays, adminUser)
             loadItemDetails()
         }
     }

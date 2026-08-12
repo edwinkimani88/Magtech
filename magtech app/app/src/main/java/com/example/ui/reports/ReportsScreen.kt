@@ -26,6 +26,7 @@ fun ReportsScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var selectedTransaction by remember { mutableStateOf<com.example.data.db.entities.TransactionEntity?>(null) }
 
     Scaffold(
         topBar = {
@@ -82,7 +83,39 @@ fun ReportsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Time Period Filter Chips
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(DarkSurface)
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                com.example.util.TimePeriod.values().forEach { period ->
+                    val isSel = uiState.selectedTimePeriod == period
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isSel) TerracottaPeach else Color.Transparent)
+                            .clickable { viewModel.selectTimePeriod(period) }
+                            .padding(vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = period.label,
+                            fontSize = 11.sp,
+                            fontWeight = if (isSel) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSel) TextOnTerracotta else TextSecondary
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Summary Card Grid
             Box(
@@ -154,6 +187,7 @@ fun ReportsScreen(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(14.dp))
                                 .background(DarkSurface)
+                                .clickable { selectedTransaction = tx }
                                 .padding(14.dp)
                         ) {
                             Row(
@@ -187,6 +221,48 @@ fun ReportsScreen(
                     }
                 }
             }
+        }
+
+        // Transaction Detail Dialog
+        if (selectedTransaction != null) {
+            val tx = selectedTransaction!!
+            val dateStr = java.text.SimpleDateFormat("dd MMM yyyy, HH:mm", java.util.Locale.US).format(java.util.Date(tx.timestamp))
+            AlertDialog(
+                onDismissRequest = { selectedTransaction = null },
+                title = { Text("Taarifa za Transaction Audit", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Transaction ID: #${tx.id}", fontSize = 12.sp, color = TerracottaPeach)
+                        Text("Description: ${tx.description}", fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.Medium)
+                        Divider(color = DarkBorder)
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Aina (Type):", fontSize = 12.sp, color = TextSecondary)
+                            Text(tx.type, fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Kiasi (Amount):", fontSize = 12.sp, color = TextSecondary)
+                            Text("KSh ${tx.amount.toInt()}", fontSize = 14.sp, color = AccentGreen, fontWeight = FontWeight.Black)
+                        }
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Branch Shop:", fontSize = 12.sp, color = TextSecondary)
+                            Text(tx.shopLocation, fontSize = 12.sp, color = Color.White)
+                        }
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Date & Time:", fontSize = 12.sp, color = TextSecondary)
+                            Text(dateStr, fontSize = 12.sp, color = Color.White)
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { selectedTransaction = null },
+                        colors = ButtonDefaults.buttonColors(containerColor = TerracottaPeach)
+                    ) {
+                        Text("Funga", color = TextOnTerracotta)
+                    }
+                },
+                containerColor = DarkSurface
+            )
         }
     }
 }

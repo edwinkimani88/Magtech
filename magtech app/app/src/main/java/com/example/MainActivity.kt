@@ -50,12 +50,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val database = MagTechDatabase.getDatabase(applicationContext, lifecycleScope)
+        val supabaseService = com.example.data.supabase.SupabaseService(applicationContext)
         val repository = MagTechRepository(
             itemDao = database.itemDao(),
             customerDao = database.customerDao(),
             loanDao = database.loanDao(),
             smsLogDao = database.smsLogDao(),
-            transactionDao = database.transactionDao()
+            transactionDao = database.transactionDao(),
+            supabaseService = supabaseService
         )
 
         setContent {
@@ -95,10 +97,17 @@ fun MagTechApp(
                 MagTechBottomNavBar(
                     currentRoute = currentRoute,
                     onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(Screen.Dashboard.route) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
+                        if (route == Screen.Dashboard.route) {
+                            navController.navigate(Screen.Dashboard.route) {
+                                popUpTo(Screen.Dashboard.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navController.navigate(route) {
+                                popUpTo(Screen.Dashboard.route) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 )

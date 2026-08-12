@@ -26,7 +26,7 @@ try {
     $item = $stmt->fetch();
 
     if ($item) {
-        $item['photo_urls'] = json_decode($item['photo_urls'] ?? '[]', true) ?: [];
+        $item['photo_urls'] = allPhotos($item);
 
         // Related
         $relstmt = $db->prepare("
@@ -39,7 +39,7 @@ try {
         $relstmt->execute([$item['category'], $item['id']]);
         $related = $relstmt->fetchAll();
         foreach ($related as &$r) {
-            $r['photo_urls'] = json_decode($r['photo_urls'] ?? '[]', true) ?: [];
+            $r['photo_urls'] = allPhotos($r);
         }
     }
 } catch (Exception $e) {
@@ -251,7 +251,7 @@ require_once __DIR__ . '/includes/header.php';
         <!-- Share -->
         <div style="display:flex;align-items:center;gap:.75rem;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--grey-100)">
           <span style="font-size:var(--text-sm);color:var(--text-secondary)">Share:</span>
-          <a href="https://wa.me/?text=Check+this+out+at+MagTech: <?= urlencode($item['item_name']) ?>+— <?= urlencode(APP_URL . '/product?id=' . $item['remote_item_id']) ?>"
+          <a href="https://wa.me/?text=Check+this+out+at+MagTech: <?= urlencode($item['item_name']) ?>+— <?= urlencode(productUrl($item)) ?>"
              target="_blank" class="btn btn--ghost btn--sm">WhatsApp</a>
           <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>window.magtechShowToast('Link copied!'))"
                   class="btn btn--ghost btn--sm">Copy link</button>

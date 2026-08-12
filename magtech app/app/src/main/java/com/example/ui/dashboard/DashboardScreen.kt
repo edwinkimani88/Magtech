@@ -219,17 +219,44 @@ fun DashboardScreen(
                 }
             }
 
-            // 4. Financial Metrics Overview
+            // 4. Financial Metrics Overview with Time Period Filter
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("Summary za Pesa (Financial Overview)", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Summary za Pesa", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            com.example.util.TimePeriod.values().forEach { period ->
+                                val isSelected = uiState.selectedTimePeriod == period
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(if (isSelected) TerracottaPeach else DarkSurface)
+                                        .clickable { viewModel.selectTimePeriod(period) }
+                                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = period.label,
+                                        fontSize = 10.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        color = if (isSelected) TextOnTerracotta else TextSecondary
+                                    )
+                                }
+                            }
+                        }
+                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         MetricCard(
-                            title = "Total Revenue",
+                            title = "Revenue (${uiState.selectedTimePeriod.label})",
                             value = "KSh ${uiState.totalRevenueKsh.toInt()}",
                             icon = Icons.Default.TrendingUp,
                             accentColor = AccentGreen,
@@ -238,7 +265,7 @@ fun DashboardScreen(
                         )
 
                         MetricCard(
-                            title = "Loans Disbursed",
+                            title = "Disbursed (${uiState.selectedTimePeriod.label})",
                             value = "KSh ${uiState.totalDisbursedKsh.toInt()}",
                             icon = Icons.Default.AccountBalanceWallet,
                             accentColor = TerracottaPeach,

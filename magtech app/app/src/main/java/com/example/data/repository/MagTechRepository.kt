@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.data.db.daos.*
 import com.example.data.db.entities.*
+import com.example.data.supabase.SupabaseService
 import kotlinx.coroutines.flow.Flow
 import java.util.Calendar
 
@@ -10,7 +11,8 @@ class MagTechRepository(
     private val customerDao: CustomerDao,
     private val loanDao: LoanDao,
     private val smsLogDao: SmsLogDao,
-    private val transactionDao: TransactionDao
+    private val transactionDao: TransactionDao,
+    private val supabaseService: SupabaseService? = null
 ) {
     val allItems: Flow<List<ItemEntity>> = itemDao.getAllItems()
     val marketplaceItems: Flow<List<ItemEntity>> = itemDao.getMarketplaceItems()
@@ -73,13 +75,23 @@ class MagTechRepository(
         photoUrls: List<String>,
         shopLocation: String = "Shop 1"
     ): Long {
-        // Find existing customer or create new
+        // Sync customer to Supabase
+        val supabaseCustId = supabaseService?.syncCustomerToSupabase(
+            fullName = customerName,
+            nationalId = nationalId,
+            phoneNumber = phoneNumber,
+            notes = notes,
+            shopLocation = shopLocation
+        )
+
+        // Find existing customer or create new in Room
         var customer = customerDao.getCustomerByNationalId(nationalId)
         val customerId = if (customer != null) {
             customer.id
         } else {
             customerDao.insertCustomer(
                 CustomerEntity(
+                    id = supabaseCustId ?: 0,
                     fullName = customerName,
                     nationalId = nationalId,
                     phoneNumber = phoneNumber,
@@ -90,9 +102,28 @@ class MagTechRepository(
 
         val photoJson = photoUrls.joinToString(",")
 
-        // Create Item
+        // Sync Item to Supabase (Uploads photos to Supabase Storage!)
+        val supabaseItemId = supabaseService?.syncItemToSupabase(
+            itemName = itemName,
+            category = category,
+            brand = brand,
+            condition = condition,
+            estimatedMarketValue = estimatedMarketValue,
+            forcedSaleValue = forcedSaleValue,
+            notes = notes,
+            photoUrls = photoUrls,
+            status = "Active Loan",
+            entryType = "LOAN",
+            isPublished = true,
+            marketplacePrice = estimatedMarketValue,
+            customerId = customerId,
+            shopLocation = shopLocation
+        )
+
+        // Create Item in Room
         val itemId = itemDao.insertItem(
             ItemEntity(
+                id = supabaseItemId ?: 0,
                 itemName = itemName,
                 category = category,
                 brand = brand,
@@ -110,9 +141,22 @@ class MagTechRepository(
             )
         )
 
-        // Create Loan
+        // Sync Loan to Supabase
+        val supabaseLoanId = supabaseService?.syncLoanToSupabase(
+            itemId = itemId,
+            customerId = customerId,
+            amountGiven = loanAmountGiven,
+            totalPayable = totalAmountPayable,
+            paidAmount = 0.0,
+            dueDateMs = dueDateMs,
+            status = "ACTIVE",
+            shopLocation = shopLocation
+        )
+
+        // Create Loan in Room
         val loanId = loanDao.insertLoan(
             LoanEntity(
+                id = supabaseLoanId ?: 0,
                 itemId = itemId,
                 customerId = customerId,
                 amountGiven = loanAmountGiven,
@@ -125,14 +169,24 @@ class MagTechRepository(
             )
         )
 
-        // Record Transaction
+        // Record Transaction in Supabase & Room
+        val txDesc = "Loan disbursed for $itemName to $customerName"
+        supabaseService?.syncTransactionToSupabase(
+            type = "LOAN_DISBURSED",
+            amount = loanAmountGiven,
+            itemId = itemId,
+            customerId = customerId,
+            description = txDesc,
+            shopLocation = shopLocation
+        )
+
         transactionDao.insertTransaction(
             TransactionEntity(
                 type = "LOAN_DISBURSED",
                 amount = loanAmountGiven,
                 itemId = itemId,
                 customerId = customerId,
-                description = "Loan disbursed for $itemName to $customerName",
+                description = txDesc,
                 shopLocation = shopLocation
             )
         )
@@ -155,9 +209,18 @@ class MagTechRepository(
     ): Long {
         var customerId: Long? = null
         if (sellerName.isNotBlank() && sellerPhone.isNotBlank()) {
+            val supabaseCustId = supabaseService?.syncCustomerToSupabase(
+                fullName = sellerName,
+                nationalId = "N/A",
+                phoneNumber = sellerPhone,
+                notes = "Direct Item Seller",
+                shopLocation = shopLocation
+            )
+
             val existing = customerDao.getCustomerByPhone(sellerPhone)
             customerId = existing?.id ?: customerDao.insertCustomer(
                 CustomerEntity(
+                    id = supabaseCustId ?: 0,
                     fullName = sellerName,
                     nationalId = "N/A",
                     phoneNumber = sellerPhone,
@@ -168,8 +231,26 @@ class MagTechRepository(
 
         val photoJson = photoUrls.joinToString(",")
 
+        val supabaseItemId = supabaseService?.syncItemToSupabase(
+            itemName = itemName,
+            category = category,
+            brand = brand,
+            condition = condition,
+            estimatedMarketValue = estimatedMarketValue,
+            forcedSaleValue = purchasePrice,
+            notes = notes,
+            photoUrls = photoUrls,
+            status = "Purchased",
+            entryType = "DIRECT_PURCHASE",
+            isPublished = true,
+            marketplacePrice = estimatedMarketValue,
+            customerId = customerId,
+            shopLocation = shopLocation
+        )
+
         val itemId = itemDao.insertItem(
             ItemEntity(
+                id = supabaseItemId ?: 0,
                 itemName = itemName,
                 category = category,
                 brand = brand,
@@ -187,13 +268,23 @@ class MagTechRepository(
             )
         )
 
+        val txDesc = "Direct purchase: $itemName"
+        supabaseService?.syncTransactionToSupabase(
+            type = "DIRECT_PURCHASE",
+            amount = purchasePrice,
+            itemId = itemId,
+            customerId = customerId,
+            description = txDesc,
+            shopLocation = shopLocation
+        )
+
         transactionDao.insertTransaction(
             TransactionEntity(
                 type = "DIRECT_PURCHASE",
                 amount = purchasePrice,
                 itemId = itemId,
                 customerId = customerId,
-                description = "Direct purchase: $itemName",
+                description = txDesc,
                 shopLocation = shopLocation
             )
         )
@@ -201,17 +292,29 @@ class MagTechRepository(
         return itemId
     }
 
-    suspend fun recordLoanPayment(loanId: Long, amountPaid: Double) {
+    suspend fun recordLoanPayment(loanId: Long, amountPaid: Double, adminUser: String = "Admin") {
         val loan = loanDao.getLoanById(loanId) ?: return
+        val previousBalance = loan.totalPayable - loan.paidAmount
         val newPaid = loan.paidAmount + amountPaid
-        val isFullyRedeemed = newPaid >= loan.totalPayable
-        val newStatus = if (isFullyRedeemed) "REDEEMED" else loan.status
+        val newBalance = (loan.totalPayable - newPaid).coerceAtLeast(0.0)
+        val isFullyRedeemed = newBalance <= 0.0
+        val newStatus = if (isFullyRedeemed) "PAID" else "PARTIALLY_PAID"
 
         val updatedLoan = loan.copy(
             paidAmount = newPaid,
             status = newStatus
         )
         loanDao.updateLoan(updatedLoan)
+
+        // Sync payment & updated loan to Supabase
+        supabaseService?.syncLoanPaymentToSupabase(
+            loanId = loanId,
+            paymentAmount = amountPaid,
+            previousBalance = previousBalance,
+            newBalance = newBalance,
+            adminUser = adminUser,
+            shopLocation = loan.shopLocation
+        )
 
         // Update item status if redeemed
         if (isFullyRedeemed) {
@@ -221,13 +324,69 @@ class MagTechRepository(
             }
         }
 
+        val txDesc = "Repayment of KSh ${amountPaid.toInt()} on Loan #$loanId"
+        supabaseService?.syncTransactionToSupabase(
+            type = "LOAN_REPAYMENT",
+            amount = amountPaid,
+            itemId = loan.itemId,
+            customerId = loan.customerId,
+            description = txDesc,
+            shopLocation = loan.shopLocation,
+            adminUser = adminUser
+        )
+
         transactionDao.insertTransaction(
             TransactionEntity(
                 type = "LOAN_REPAYMENT",
                 amount = amountPaid,
                 itemId = loan.itemId,
                 customerId = loan.customerId,
-                description = "Repayment of KSh ${amountPaid.toInt()} on Loan #$loanId",
+                description = txDesc,
+                shopLocation = loan.shopLocation
+            )
+        )
+    }
+
+    suspend fun extendLoan(loanId: Long, renewalFee: Double, extensionDays: Int = 14, adminUser: String = "Admin") {
+        val loan = loanDao.getLoanById(loanId) ?: return
+        val previousDueDate = loan.dueDate
+        val newDueDate = previousDueDate + (extensionDays.toLong() * 24 * 60 * 60 * 1000)
+
+        val updatedLoan = loan.copy(
+            dueDate = newDueDate,
+            status = "EXTENDED"
+        )
+        loanDao.updateLoan(updatedLoan)
+
+        // Sync renewal to Supabase
+        supabaseService?.syncLoanRenewalToSupabase(
+            loanId = loanId,
+            renewalFee = renewalFee,
+            previousDueDateMs = previousDueDate,
+            newDueDateMs = newDueDate,
+            renewalNumber = 1,
+            adminUser = adminUser,
+            shopLocation = loan.shopLocation
+        )
+
+        val txDesc = "Loan #$loanId Extended for $extensionDays days (Fee: KSh ${renewalFee.toInt()})"
+        supabaseService?.syncTransactionToSupabase(
+            type = "LOAN_EXTENSION",
+            amount = renewalFee,
+            itemId = loan.itemId,
+            customerId = loan.customerId,
+            description = txDesc,
+            shopLocation = loan.shopLocation,
+            adminUser = adminUser
+        )
+
+        transactionDao.insertTransaction(
+            TransactionEntity(
+                type = "LOAN_EXTENSION",
+                amount = renewalFee,
+                itemId = loan.itemId,
+                customerId = loan.customerId,
+                description = txDesc,
                 shopLocation = loan.shopLocation
             )
         )
@@ -251,5 +410,26 @@ class MagTechRepository(
                 status = status
             )
         )
+    }
+
+    suspend fun syncAllDataFromCloud(): Boolean {
+        if (supabaseService == null) return false
+        return try {
+            val customers = supabaseService.fetchCustomersFromSupabase()
+            customers.forEach { customerDao.insertCustomer(it) }
+
+            val items = supabaseService.fetchItemsFromSupabase()
+            items.forEach { itemDao.insertItem(it) }
+
+            val loans = supabaseService.fetchLoansFromSupabase()
+            loans.forEach { loanDao.insertLoan(it) }
+
+            val txs = supabaseService.fetchTransactionsFromSupabase()
+            txs.forEach { transactionDao.insertTransaction(it) }
+
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }

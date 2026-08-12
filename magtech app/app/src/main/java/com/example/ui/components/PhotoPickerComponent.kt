@@ -68,19 +68,29 @@ fun PhotoPickerComponent(
         }
     }
 
-    fun launchCamera() {
-        if (photos.size >= maxPhotos) return
-        try {
-            val imagesDir = File(context.cacheDir, "images")
-            if (!imagesDir.exists()) imagesDir.mkdirs()
-            val file = File.createTempFile("magtech_item_${System.currentTimeMillis()}", ".jpg", imagesDir)
-            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-            tempCameraUri = uri
-            cameraLauncher.launch(uri)
-        } catch (e: Exception) {
-            // Fallback gallery
+    // Camera Permission Launcher
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            try {
+                val imagesDir = File(context.cacheDir, "images")
+                if (!imagesDir.exists()) imagesDir.mkdirs()
+                val file = File.createTempFile("magtech_item_${System.currentTimeMillis()}", ".jpg", imagesDir)
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                tempCameraUri = uri
+                cameraLauncher.launch(uri)
+            } catch (e: Exception) {
+                galleryLauncher.launch("image/*")
+            }
+        } else {
             galleryLauncher.launch("image/*")
         }
+    }
+
+    fun launchCamera() {
+        if (photos.size >= maxPhotos) return
+        cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
     }
 
     Column(

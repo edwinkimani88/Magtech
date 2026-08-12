@@ -3,6 +3,9 @@ name: Build & Release MagTech APK
 on:
   push:
     branches: [main]
+    paths:
+      - 'magtech app/**'
+      - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 
 jobs:

@@ -42,9 +42,8 @@ define('CATEGORIES', [
     'Laptops',
     'TVs & Audio',
     'Gaming',
+    'Kitchen',
     'Fridges & Appliances',
-    'Cookers',
-    'Home Appliances',
     'Accessories',
     'Other Electronics',
 ]);

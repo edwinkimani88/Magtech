@@ -229,33 +229,38 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    val pin = if (pinInput.isBlank()) "1234" else pinInput
-                    if (viewModel.loginWithPin(pin, selectedRole, rememberMe)) {
-                        onLoginSuccess()
+                    viewModel.loginWithPin(pinInput, selectedRole, rememberMe) { success ->
+                        if (success) onLoginSuccess()
                     }
                 },
+                enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(containerColor = TerracottaPeach),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
             ) {
-                Text(
-                    text = "INGIA SYSTEM",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextOnTerracotta
-                )
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(color = TextOnTerracotta, modifier = Modifier.size(24.dp))
+                } else {
+                    Text(
+                        text = "INGIA SYSTEM",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextOnTerracotta
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Quick Sign In shortcut
             OutlinedButton(
                 onClick = {
-                    viewModel.loginWithPin("1234", selectedRole, true)
-                    onLoginSuccess()
+                    viewModel.loginWithPin("1234", selectedRole, rememberMe) { success ->
+                        if (success) onLoginSuccess()
+                    }
                 },
+                enabled = !uiState.isLoading,
                 border = androidx.compose.foundation.BorderStroke(1.dp, DarkBorder),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -267,7 +272,7 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Quick Admin Sign In",
+                    text = "Authenticate with Admin PIN (1234)",
                     fontSize = 13.sp,
                     color = Color.White
                 )
