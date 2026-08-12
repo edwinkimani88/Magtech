@@ -33,15 +33,11 @@ jobs:
         run: |
           cp .env.example .env
 
-      - name: Setup Gradle (cache only)
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Make gradlew executable
-        run: chmod +x "magtech app/gradlew"
-
       - name: Build Debug APK
-        working-directory: "magtech app"
-        run: ./gradlew assembleDebug --no-daemon --no-configuration-cache --stacktrace
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          build-root-directory: "magtech app"
+          arguments: assembleDebug --no-daemon --no-configuration-cache --stacktrace
 
       - name: Verify & Copy Compiled APK
         run: |
