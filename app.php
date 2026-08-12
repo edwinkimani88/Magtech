@@ -64,12 +64,12 @@ $bodyClass = 'app-page-body';
       📦 Version <?= APK_VERSION ?> · Released <?= APK_RELEASE_DATE ?>
     </div>
 
-    <a href="#"
-       class="btn btn--secondary btn--lg btn--full"
+    <a href="<?= APK_DOWNLOAD_URL ?>"
+       class="btn btn--primary btn--lg btn--full"
+       download="magtech-admin.apk"
        id="download-apk-btn"
-       style="font-size:1rem; opacity:0.5; cursor:not-allowed;"
-       onclick="event.preventDefault(); alert('Download link is temporarily disabled.');">
-      🚫 Download Link Removed (Testing)
+       style="font-size:1rem">
+      ⬇️ Download APK (Android)
     </a>
 
     <div class="qr-placeholder" title="QR code for APK download URL">

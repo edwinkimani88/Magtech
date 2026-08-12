@@ -29,7 +29,7 @@
         <li><a href="<?= APP_URL ?>/shop?sort=price_asc">Best Deals</a></li>
         <li><a href="<?= APP_URL ?>/shop?shop_location=Shop+1">Chairman Branch Items</a></li>
         <li><a href="<?= APP_URL ?>/shop?shop_location=Shop+2">Deliverance Rd Items</a></li>
-        <li><a href="#" style="color:var(--text-muted);opacity:0.5;cursor:default;" onclick="event.preventDefault();">App (Disabled)</a></li>
+        <li><a href="<?= APP_URL ?>/app" style="color:var(--teal-400);font-weight:600">⬇️ Download App</a></li>
       </ul>
     </div>
 
@@ -64,7 +64,7 @@
       <div class="footer-legal">
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Use</a>
-        <a href="#" class="footer-app-link" style="opacity:0.5;cursor:default;" onclick="event.preventDefault();">Admin App</a>
+        <a href="<?= APP_URL ?>/app" class="footer-app-link">Admin App</a>
       </div>
     </div>
   </div>
