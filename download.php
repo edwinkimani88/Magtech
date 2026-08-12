@@ -2,19 +2,10 @@
 // Direct APK Download Handler
 require_once __DIR__ . '/config/config.php';
 
-$localApk = __DIR__ . '/downloads/magtech-admin.apk';
-
-// 1. If local APK exists and is valid (> 1MB), serve it directly
-if (file_exists($localApk) && filesize($localApk) > 1000000) {
-    header('Content-Type: application/vnd.android.package-archive');
-    header('Content-Disposition: attachment; filename="magtech-admin.apk"');
-    header('Content-Length: ' . filesize($localApk));
-    header('Cache-Control: no-cache, must-revalidate');
-    header('Pragma: no-cache');
-    header('Expires: 0');
-    readfile($localApk);
-    exit;
-}
+// Download link temporarily disabled for device cache testing
+header('Content-Type: text/plain');
+echo "Download link is temporarily removed for testing.";
+exit;
 
 // 2. GitHub Release Tag URL for v1.0.0
 $releaseUrl = 'https://github.com/edwinkimani88/Magtech/releases/download/v1.0.0/magtech-admin.apk';
