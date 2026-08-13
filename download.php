@@ -2,39 +2,14 @@
 // Direct APK Download Handler
 require_once __DIR__ . '/config/config.php';
 
-$localApk = __DIR__ . '/downloads/magtech-admin.apk';
-
-// 1. If local APK exists and is valid (> 1MB), serve it directly
-if (file_exists($localApk) && filesize($localApk) > 1000000) {
-    header('Content-Type: application/vnd.android.package-archive');
-    header('Content-Disposition: attachment; filename="magtech-admin.apk"');
-    header('Content-Length: ' . filesize($localApk));
-    header('Cache-Control: no-cache, must-revalidate');
-    header('Pragma: no-cache');
-    header('Expires: 0');
-    readfile($localApk);
-    exit;
-}
-
-// 2. GitHub Release Tag URL for v1.0.0
 $releaseUrl = 'https://github.com/edwinkimani88/Magtech/releases/download/v1.0.0/magtech-admin.apk';
 
-// Check if the release asset URL is live and returns a valid binary (> 1MB)
-$ch = curl_init($releaseUrl);
-curl_setopt($ch, CURLOPT_NOBODY, true); // HEAD request
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($ch, CURLOPT_USERAGENT, 'MagTech-App-Downloader');
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-curl_exec($ch);
-$httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$contentLen = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-curl_close($ch);
-
-if ($httpCode === 200 && $contentLen > 1000000) {
-    // Valid APK file exists on GitHub Releases — redirect to direct download
-    header('Location: ' . $releaseUrl);
-    exit;
-}
+// Send no-cache headers to prevent device browser caching
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+header('Location: ' . $releaseUrl);
+exit;
 
 // 3. Fallback screen if release build is still running or compiling
 ?>
