@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'magtech app/**'
+      - 'magtech-investments/**'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 
@@ -29,20 +29,20 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Create .env file from secrets
-        working-directory: "magtech app"
+        working-directory: "magtech-investments"
         run: |
           cp .env.example .env
 
       - name: Build Debug APK
         uses: gradle/actions/setup-gradle@v3
         with:
-          build-root-directory: "magtech app"
+          build-root-directory: "magtech-investments"
           arguments: assembleDebug --no-daemon --no-configuration-cache --stacktrace
 
       - name: Verify & Copy Compiled APK
         run: |
           mkdir -p release-artifacts
-          FOUND_APK=$(find "magtech app" -name "*.apk" -type f | head -n 1)
+          FOUND_APK=$(find "magtech-investments" -name "*.apk" -type f | head -n 1)
           echo "Found APK file at: $FOUND_APK"
           if [ -z "$FOUND_APK" ]; then
             echo "::error::No compiled APK file was produced by Gradle build!"
