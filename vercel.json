@@ -21,11 +21,11 @@
     { "src": "/api/v1/marketplace/photos/upload", "dest": "/api/v1/marketplace/photos.php" },
     { "src": "/api/v1/public/items", "dest": "/api/v1/public/items.php" },
     { "src": "/api/v1/public/items/(.*)", "dest": "/api/v1/public/item.php?id=$1" },
-    { "src": "/shop", "dest": "/shop.php" },
-    { "src": "/product", "dest": "/product.php" },
-    { "src": "/app", "dest": "/app.php" },
-    { "src": "/download", "dest": "/download.php" },
-    { "src": "/setup", "dest": "/setup.php" },
+    { "src": "/shop(\\.php)?", "dest": "/shop.php" },
+    { "src": "/product(\\.php)?", "dest": "/product.php" },
+    { "src": "/app(\\.php)?", "dest": "/app.php" },
+    { "src": "/download(\\.php)?", "dest": "/download.php" },
+    { "src": "/setup(\\.php)?", "dest": "/setup.php" },
     { "src": "/(.*)", "dest": "/index.php" }
   ]
 }
