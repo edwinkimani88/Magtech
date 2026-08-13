@@ -66,7 +66,6 @@ $bodyClass = 'app-page-body';
 
     <a href="<?= APK_DOWNLOAD_URL ?>"
        class="btn btn--primary btn--lg btn--full"
-       download="magtech-admin.apk"
        id="download-apk-btn"
        style="font-size:1rem">
       ⬇️ Download APK (Android)
