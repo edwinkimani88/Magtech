@@ -1,0 +1,6 @@
+{
+  "name": "MagTech Investments",
+  "description": "Kenyan smart inventory, loan, and sales management system connected to Supabase and the MagTech marketplace.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
