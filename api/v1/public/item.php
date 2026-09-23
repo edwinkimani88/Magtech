@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../config/config.php';
 require_once __DIR__ . '/../../../config/database.php';
+require_once __DIR__ . '/../../../includes/supabase.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: ' . CORS_ORIGIN);
@@ -17,20 +18,7 @@ if (!$id) {
     exit;
 }
 
-$db = getDB();
-
-// Increment view counter
-$db->prepare("UPDATE marketplace_items SET views_count = views_count + 1 WHERE (id = ? OR remote_item_id = ?) AND is_published = 1")
-   ->execute([$id, $id]);
-
-// Fetch full item
-$stmt = $db->prepare("
-    SELECT * FROM marketplace_items
-    WHERE (id = ? OR remote_item_id = ?) AND is_published = 1
-    LIMIT 1
-");
-$stmt->execute([$id, $id]);
-$item = $stmt->fetch();
+$item = supabaseGetItemById($id);
 
 if (!$item) {
     http_response_code(404);
@@ -38,27 +26,24 @@ if (!$item) {
     exit;
 }
 
-$item['photo_urls']    = json_decode($item['photo_urls'] ?? '[]', true) ?: [];
 $item['primary_photo'] = $item['photo_urls'][0] ?? null;
 
 // Get shop details
-$shops       = SHOPS;
-$shopKey     = $item['shop_location'];
+$shops = SHOPS;
+$shopKey = $item['shop_location'];
 $item['branch_details'] = $shops[$shopKey] ?? null;
 
 // Related items (same category, excluding this item)
-$related = $db->prepare("
-    SELECT id, remote_item_id, item_name, brand, condition_grade,
-           marketplace_price, shop_location, photo_urls
-    FROM marketplace_items
-    WHERE category = ? AND is_published = 1 AND is_available = 1
-      AND id != ?
-    ORDER BY updated_at DESC LIMIT 6
-");
-$related->execute([$item['category'], $item['id']]);
-$relatedItems = $related->fetchAll();
+$relRes = supabaseFetchItems([
+    'category' => $item['category'],
+    'limit'    => 5,
+]);
+$relatedItems = array_values(array_filter($relRes['items'] ?? [], function($r) use ($item) {
+    return ($r['id'] ?? 0) != ($item['id'] ?? 0);
+}));
+$relatedItems = array_slice($relatedItems, 0, 4);
+
 foreach ($relatedItems as &$r) {
-    $r['photo_urls']    = json_decode($r['photo_urls'] ?? '[]', true) ?: [];
     $r['primary_photo'] = $r['photo_urls'][0] ?? null;
 }
 

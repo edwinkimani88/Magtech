@@ -42,40 +42,23 @@ $pages = 1;
 $categoryCounts = [];
 
 try {
-    $db = getDB();
-
-    // Total count
-    $cs = $db->prepare("SELECT COUNT(*) FROM marketplace_items WHERE $whereSQL");
-    $cs->execute($params);
-    $total = (int)$cs->fetchColumn();
-    $pages = (int)ceil($total / $limit);
-
-    // Items
     $offset = ($page - 1) * $limit;
-    $st = $db->prepare("
-        SELECT id, remote_item_id, item_name, category, brand,
-               condition_grade, marketplace_price, estimated_market_value,
-               shop_location, shop_branch_name, is_available, photo_urls, views_count
-        FROM marketplace_items
-        WHERE $whereSQL
-        ORDER BY $orderSQL
-        LIMIT :lim OFFSET :off
-    ");
-    foreach ($params as $k => $v) $st->bindValue($k, $v);
-    $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-    $st->bindValue(':off', $offset, PDO::PARAM_INT);
-    $st->execute();
-    $items = $st->fetchAll();
-    foreach ($items as &$i) {
-        $i['photo_urls'] = json_decode($i['photo_urls'] ?? '[]', true) ?: [];
-    }
+    $fetchRes = supabaseFetchItems([
+        'category'      => $category,
+        'shop_location' => $shopLoc,
+        'search'        => $search,
+        'sort'          => $sort,
+        'limit'         => $limit,
+        'offset'        => $offset,
+    ]);
 
-    // Category counts
-    $cstmt = $db->query("SELECT category, COUNT(*) as cnt FROM marketplace_items WHERE is_published=1 AND is_available=1 GROUP BY category ORDER BY cnt DESC");
-    $categoryCounts = $cstmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    $items = $fetchRes['items'] ?? [];
+    $total = (int)($fetchRes['total'] ?? count($items));
+    $pages = max(1, (int)ceil($total / $limit));
+    $categoryCounts = supabaseGetCategoryCounts();
 
 } catch (Exception $e) {
-    // DB not set up yet — will show empty state
+    // If Supabase and fallback both fail
 }
 
 // ── SEO ─────────────────────────────────────────────────────────

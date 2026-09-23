@@ -67,13 +67,36 @@ $bodyClass = 'app-page-body';
     <a href="<?= APK_DOWNLOAD_URL ?>"
        class="btn btn--primary btn--lg btn--full"
        id="download-apk-btn"
-       download="magtech-admin.apk"
-       style="font-size:1rem">
-      ⬇️ Download APK (Android)
+       download="<?= APK_FILENAME ?>"
+       style="font-size:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem">
+      <span>⬇️</span> Download MagTech Loans APK (Android)
     </a>
 
-    <div class="qr-placeholder" title="QR code for APK download URL">
-      📱
+    <div style="display:flex;gap:.75rem;margin-top:.75rem;justify-content:center;font-size:12px">
+      <a href="<?= APP_URL ?>/downloads/Magtech%20loans.apk" download="<?= APK_FILENAME ?>" style="color:var(--teal-300);text-decoration:underline">
+        Direct Static Link
+      </a>
+      <span style="color:rgba(255,255,255,.3)">·</span>
+      <a href="https://github.com/edwinkimani88/Magtech/releases/latest/download/magtech-admin.apk" style="color:var(--teal-300);text-decoration:underline" target="_blank" rel="noopener">
+        Cloud Mirror (GitHub)
+      </a>
+    </div>
+
+    <?php
+      // For QR code, use public GitHub Release if on localhost, so phones can download
+      $qrUrl = str_contains(APP_URL, 'localhost') || str_contains(APP_URL, '127.0.0.1')
+        ? 'https://github.com/edwinkimani88/Magtech/releases/latest/download/magtech-admin.apk'
+        : APK_DOWNLOAD_URL;
+    ?>
+
+    <div style="text-align:center;margin:1.5rem auto 1rem">
+      <div style="background:#fff;padding:8px;border-radius:12px;display:inline-block;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&amp;data=<?= urlencode($qrUrl) ?>"
+             alt="QR code to download MagTech Loans APK"
+             width="140" height="140"
+             style="display:block">
+      </div>
+      <p style="font-size:11px;color:rgba(255,255,255,.6);margin-top:6px">Scan with Android camera to download directly on phone</p>
     </div>
 
     <div class="app-card__instructions">

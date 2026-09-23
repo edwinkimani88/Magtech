@@ -55,7 +55,8 @@ jobs:
             exit 1
           fi
           cp "$FOUND_APK" "release-artifacts/magtech-admin.apk"
-          APK_BYTES=$(wc -c < "release-artifacts/magtech-admin.apk")
+          cp "$FOUND_APK" "release-artifacts/Magtech loans.apk"
+          APK_BYTES=$(wc -c < "release-artifacts/Magtech loans.apk")
           echo "Compiled APK size: $APK_BYTES bytes"
           if [ "$APK_BYTES" -lt 1000000 ]; then
             echo "::error::Compiled APK file size ($APK_BYTES bytes) is too small to be valid!"
@@ -84,7 +85,7 @@ jobs:
           tag_name: v1.0.0
           name: "MagTech Admin App — v1.0.0"
           body: |
-            ## 📱 MagTech Admin App — Release Build
+            ## 📱 MagTech Loans App — Release Build
 
             **Version:** 1.0.0
             **Built:** ${{ steps.version.outputs.DATE }}
@@ -92,12 +93,14 @@ jobs:
             **Size:** ${{ env.APK_SIZE }}
 
             ### Installation
-            1. Download `magtech-admin.apk` below
+            1. Download `Magtech loans.apk` below
             2. On your Android device go to **Settings → Security → Install unknown apps**
             3. Enable **"Allow from this source"** for your browser/file manager
             4. Open the downloaded APK and tap **Install**
             5. Log in with your MagTech admin credentials
-          files: release-artifacts/magtech-admin.apk
+          files: |
+            release-artifacts/magtech-admin.apk
+            release-artifacts/Magtech loans.apk
           prerelease: false
           make_latest: true
         env:

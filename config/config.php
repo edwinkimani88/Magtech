@@ -1,6 +1,26 @@
 <?php
 // MagTech Application Configuration
 
+// Load local .env if present
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#')) continue;
+        if (str_contains($line, '=')) {
+            [$key, $val] = explode('=', $line, 2);
+            $key = trim($key);
+            $val = trim($val, " \t\n\r\0\x0B\"'");
+            if (getenv($key) === false || getenv($key) === '') {
+                putenv("{$key}={$val}");
+                $_ENV[$key] = $val;
+                $_SERVER[$key] = $val;
+            }
+        }
+    }
+}
+
 // API Security
 define('MAGTECH_API_KEY', 'mt_live_sk_your_secret_key_here_change_me');
 
@@ -52,11 +72,13 @@ define('CATEGORIES', [
 define('ITEMS_PER_PAGE', 20);
 
 // API Keys & Services
-define('OPENROUTER_API_KEY', getenv('OPENROUTER_API_KEY') ?: 'YOUR_OPENROUTER_API_KEY');
-define('SUPABASE_PUBLISHABLE_KEY', getenv('SUPABASE_PUBLISHABLE_KEY') ?: 'YOUR_SUPABASE_PUBLISHABLE_KEY');
-define('SUPABASE_SECRET_KEY', getenv('SUPABASE_SECRET_KEY') ?: 'YOUR_SUPABASE_SECRET_KEY');
+define('OPENROUTER_API_KEY', getenv('OPENROUTER_API_KEY') ?: '');
+define('SUPABASE_URL', rtrim(getenv('SUPABASE_URL') ?: '', '/'));
+define('SUPABASE_PUBLISHABLE_KEY', getenv('SUPABASE_PUBLISHABLE_KEY') ?: '');
+define('SUPABASE_SECRET_KEY', getenv('SUPABASE_SECRET_KEY') ?: '');
 
-// APK Info (for /app route)
+// APK Info (for /app route and /download)
+define('APK_FILENAME', 'Magtech loans.apk');
 define('APK_VERSION', '1.0.0');
 define('APK_RELEASE_DATE', '2026-08-11');
 define('APK_DOWNLOAD_URL', APP_URL . '/download');

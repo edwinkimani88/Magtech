@@ -14,36 +14,26 @@ $item    = null;
 $related = [];
 
 try {
-    $db = getDB();
-
-    // Increment views
-    $db->prepare("UPDATE marketplace_items SET views_count = views_count + 1 WHERE (id = ? OR remote_item_id = ?) AND is_published = 1")
-       ->execute([$id, $id]);
-
-    // Fetch item
-    $stmt = $db->prepare("SELECT * FROM marketplace_items WHERE (id = ? OR remote_item_id = ?) AND is_published = 1 LIMIT 1");
-    $stmt->execute([$id, $id]);
-    $item = $stmt->fetch();
+    $item = getItemById($id);
 
     if ($item) {
         $item['photo_urls'] = allPhotos($item);
 
-        // Related
-        $relstmt = $db->prepare("
-            SELECT id, remote_item_id, item_name, brand, condition_grade,
-                   marketplace_price, shop_location, photo_urls
-            FROM marketplace_items
-            WHERE category = ? AND is_published = 1 AND is_available = 1 AND id != ?
-            ORDER BY updated_at DESC LIMIT 4
-        ");
-        $relstmt->execute([$item['category'], $item['id']]);
-        $related = $relstmt->fetchAll();
+        // Fetch related items from Supabase
+        $relRes = supabaseFetchItems([
+            'category' => $item['category'],
+            'limit'    => 5,
+        ]);
+        $related = array_filter($relRes['items'] ?? [], function($r) use ($item) {
+            return ($r['id'] ?? 0) != ($item['id'] ?? 0);
+        });
+        $related = array_slice($related, 0, 4);
         foreach ($related as &$r) {
             $r['photo_urls'] = allPhotos($r);
         }
     }
 } catch (Exception $e) {
-    // DB not set up
+    // DB or API fallback
 }
 
 if (!$item) {

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/supabase.php';
 
 /**
  * Format KSh price
@@ -88,58 +89,38 @@ function itemSlug(array $item): string {
     $slug = strtolower($item['item_name']);
     $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
     $slug = preg_replace('/\s+/', '-', trim($slug));
-    return $slug . '-' . $item['remote_item_id'];
+    return $slug . '-' . ($item['remote_item_id'] ?? $item['id']);
 }
 
 /**
- * Canonical URL for a product (always by remote_item_id).
+ * Canonical URL for a product (always by remote_item_id or id).
  */
 function productUrl(array $item): string {
-    return APP_URL . '/product?id=' . (int)$item['remote_item_id'];
+    $id = (int)($item['remote_item_id'] ?? $item['id']);
+    return APP_URL . '/product?id=' . $id;
 }
 
 /**
- * Get featured items for homepage
+ * Get featured items for homepage (communicating live with Supabase)
  */
 function getFeaturedItems(int $limit = 8): array {
-    try {
-        $db   = getDB();
-        $stmt = $db->prepare("
-            SELECT * FROM marketplace_items
-            WHERE is_published = 1 AND is_available = 1
-            ORDER BY updated_at DESC LIMIT ?
-        ");
-        $stmt->execute([$limit]);
-        $items = $stmt->fetchAll();
-        foreach ($items as &$item) {
-            $item['photo_urls'] = json_decode($item['photo_urls'] ?? '[]', true) ?: [];
-        }
-        return $items;
-    } catch (Exception $e) {
-        return [];
-    }
+    $res = supabaseFetchItems(['limit' => $limit, 'sort' => 'newest']);
+    return $res['items'] ?? [];
 }
 
 /**
- * Get items by category
+ * Get items by category (communicating live with Supabase)
  */
 function getItemsByCategory(string $category, int $limit = 6): array {
-    try {
-        $db   = getDB();
-        $stmt = $db->prepare("
-            SELECT * FROM marketplace_items
-            WHERE category = ? AND is_published = 1 AND is_available = 1
-            ORDER BY updated_at DESC LIMIT ?
-        ");
-        $stmt->execute([$category, $limit]);
-        $items = $stmt->fetchAll();
-        foreach ($items as &$item) {
-            $item['photo_urls'] = json_decode($item['photo_urls'] ?? '[]', true) ?: [];
-        }
-        return $items;
-    } catch (Exception $e) {
-        return [];
-    }
+    $res = supabaseFetchItems(['category' => $category, 'limit' => $limit]);
+    return $res['items'] ?? [];
+}
+
+/**
+ * Get item by ID from Supabase
+ */
+function getItemById(int|string $id): ?array {
+    return supabaseGetItemById($id);
 }
 
 /**
