@@ -78,9 +78,9 @@ define('SUPABASE_PUBLISHABLE_KEY', getenv('SUPABASE_PUBLISHABLE_KEY') ?: '');
 define('SUPABASE_SECRET_KEY', getenv('SUPABASE_SECRET_KEY') ?: '');
 
 // APK Info (for /app route and /download)
-define('APK_FILENAME', 'Magtech loans.apk');
+define('APK_FILENAME', 'Magtechloanapp.apk');
 define('APK_VERSION',      getenv('APK_VERSION')      ?: '1.0.0');
-define('APK_RELEASE_DATE', getenv('APK_RELEASE_DATE') ?: '2026-08-11');
+define('APK_RELEASE_DATE', getenv('APK_RELEASE_DATE') ?: '2026-09-26');
 // Use direct static path — confirmed working. PHP /download route kept as fallback.
 define('APK_DOWNLOAD_URL', APP_URL . '/downloads/' . rawurlencode(APK_FILENAME));
 

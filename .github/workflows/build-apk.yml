@@ -55,8 +55,8 @@ jobs:
             exit 1
           fi
           cp "$FOUND_APK" "release-artifacts/magtech-admin.apk"
-          cp "$FOUND_APK" "release-artifacts/Magtech loans.apk"
-          APK_BYTES=$(wc -c < "release-artifacts/Magtech loans.apk")
+          cp "$FOUND_APK" "release-artifacts/Magtechloanapp.apk"
+          APK_BYTES=$(wc -c < "release-artifacts/Magtechloanapp.apk")
           echo "Compiled APK size: $APK_BYTES bytes"
           if [ "$APK_BYTES" -lt 1000000 ]; then
             echo "::error::Compiled APK file size ($APK_BYTES bytes) is too small to be valid!"
@@ -105,7 +105,7 @@ jobs:
             5. Log in with your MagTech admin credentials
           files: |
             release-artifacts/magtech-admin.apk
-            release-artifacts/Magtech loans.apk
+            release-artifacts/Magtechloanapp.apk
           prerelease: false
           make_latest: true
         env:
@@ -114,16 +114,16 @@ jobs:
       - name: Deploy latest APK to downloads/ folder
         run: |
           # Copy fresh APK into the website's downloads folder so the static link is always current
-          cp "release-artifacts/Magtech loans.apk" "downloads/Magtech loans.apk"
-          echo "APK deployed to downloads/ — $(du -sh 'downloads/Magtech loans.apk' | cut -f1)"
+          cp "release-artifacts/Magtechloanapp.apk" "downloads/Magtechloanapp.apk"
+          echo "APK deployed to downloads/ — $(du -sh 'downloads/Magtechloanapp.apk' | cut -f1)"
 
       - name: Commit & push updated APK to repo
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "downloads/Magtech loans.apk"
+          git add "downloads/Magtechloanapp.apk"
           git diff --cached --quiet && echo "No APK change to commit" || \
-            git commit -m "chore: update downloads/Magtech loans.apk [${{ steps.version.outputs.DATE }} ${{ steps.version.outputs.SHA }}]"
+            git commit -m "chore: update downloads/Magtechloanapp.apk [${{ steps.version.outputs.DATE }} ${{ steps.version.outputs.SHA }}]"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

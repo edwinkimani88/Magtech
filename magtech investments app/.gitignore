@@ -16,3 +16,5 @@
 local.properties
 .env
 debug.keystore
+# Compiled APKs go to downloads/ only — never commit them here
+*.apk
