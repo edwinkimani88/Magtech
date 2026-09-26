@@ -2,3 +2,5 @@
 *.sh text eol=lf
 gradlew text eol=lf
 magtech-investments/gradlew text eol=lf
+# APK files must never have line endings converted
+*.apk binary

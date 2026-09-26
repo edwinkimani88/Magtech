@@ -79,9 +79,10 @@ define('SUPABASE_SECRET_KEY', getenv('SUPABASE_SECRET_KEY') ?: '');
 
 // APK Info (for /app route and /download)
 define('APK_FILENAME', 'Magtech loans.apk');
-define('APK_VERSION', '1.0.0');
-define('APK_RELEASE_DATE', '2026-08-11');
-define('APK_DOWNLOAD_URL', APP_URL . '/download');
+define('APK_VERSION',      getenv('APK_VERSION')      ?: '1.0.0');
+define('APK_RELEASE_DATE', getenv('APK_RELEASE_DATE') ?: '2026-08-11');
+// Use direct static path — confirmed working. PHP /download route kept as fallback.
+define('APK_DOWNLOAD_URL', APP_URL . '/downloads/' . rawurlencode(APK_FILENAME));
 
 // Allow CORS from everywhere for API
 define('CORS_ORIGIN', '*');
